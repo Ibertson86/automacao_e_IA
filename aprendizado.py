@@ -16,6 +16,24 @@ def visualizar_dados(df, feature_names):
     plt.suptitle("Histograma", fontsize=16)
     plt.show()
 
+    plt.figure(figsize=(10,8))
+    corr= df.corr()
+    sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
+    plt.title("Correlação")
+    plt.show()
+
+def previsao_dados_usuario(feature_names):
+    user_data = []
+    for feature in feature_names:
+        while True:
+            try:
+                valor = float(input(f"Digite o valor para {feature} "))
+                user_data.append(valor)
+                break
+            except ValueError:
+                print("Valor Inválido")
+    return np.array(user_data).reshape(1, -1)
+
 print("BEM-VINDO AO AKINATOR DE MÓVEIS v0.1")
 
 #1° passo: Carregar os dados
@@ -53,6 +71,13 @@ mae = mean_absolute_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 print(f"Erro Médio Absoluto: {mae:.2f}")
 print(f"Coeficiente de Determinação: {r2:.2f}")
+
+previsao = input("Deseja inserir seus próprios dados? (s/n)")
+if previsao == "s":
+    user_input = previsao_dados_usuario(feature_names)
+    user_input_scaled = scaler.transform(user_input)
+    prev = model.predict(user_input_scaled)
+    print(f"A previsão do preço médio para o imóvel é: ${round(prev[0] * 100000,2)}")
 
 
 
